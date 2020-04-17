@@ -1,9 +1,9 @@
-#set.seed(6)
+set.seed(1)
 
 T=300
 
-# On va essayer de simuler des chaînes de longueur T de manière uniforme. On aura pas à coup sûr 
-# des chaînes de longueur T. Plus T est grand moins cela est probable  
+# On va essayer de simuler des chaines de longueur T de maniÃ¨re uniforme. On aura pas Ã  coup sÃÂ»r 
+# des chaines de longueur T. Plus T est grand moins cela est probable  
 start_time <- Sys.time()
 
 myope_algo_et_poids = function (T) 
@@ -12,10 +12,10 @@ myope_algo_et_poids = function (T)
     bloque = 0
     direction <- seq(0,3) 
     direction <- cbind((direction %/% 2)*(1-2*(direction %% 2)), (1-direction %/% 2)*(1-2*(direction %% 2)))
-    poids = rep(4,1)  # vecteur des poids à chaque étape, partant de (0,0) les 4 directions sont disponibles 
+    poids = rep(4,1)  # vecteur des poids Ã  chaque Ã©tape, partant de (0,0) les 4 directions sont disponibles 
     t=1
     while ( t <= T & bloque!= 1 )
-    # Tant que la chaîne ne revient pas vers un point déjà visité
+    # Tant que la chaine ne revient pas vers un point dÃ©jÃ  visitÃ©
     {   
         direction_dispo = matrix(nrow=0,ncol=2) # contient les directions qui sont faisables sans intersection
         # On cherche les directions faisables
@@ -23,10 +23,10 @@ myope_algo_et_poids = function (T)
         if (!match(TRUE, direction[i,1]+X_coord[t,1] == X_coord[,1] & direction[i,2]+X_coord[t,2] == X_coord[,2], nomatch=0))
             {direction_dispo <- rbind(direction_dispo, direction[i,])}
         }
-        long =  length(direction_dispo)/2  # correspond à  longueur de direction_dispo
+        long =  length(direction_dispo)/2  # correspond Ã  longueur de direction_dispo
         if (long >=1  ){
-            # Il y a au moins une direction faisable, on en choisit une uniformément
-            poids <- rbind(poids, long) # le poids de l'étape t correspond au nombre de directions disponibles à cet étape
+            # Il y a au moins une direction faisable, on en choisit une uniformÃ©ment
+            poids <- rbind(poids, long) # le poids de l'Ã©tape t correspond au nombre de directions disponibles Ã  cette Ã©tape
             indice = floor(runif(1,min=1,max=long+1))
             direction_choisie = direction_dispo[indice, ]
             X_coord <- rbind(X_coord, X_coord[t,] + direction_choisie)
@@ -40,7 +40,7 @@ myope_algo_et_poids = function (T)
         
     }
     donnees = data.frame(cbind(X_coord,poids))
-    colnames(donnees) = c('Abscisses','Ordonnées','poids')
+    colnames(donnees) = c('Abscisses','OrdonnÃ©es','poids')
     rownames(donnees) = seq(1,nrow(X_coord)) 
     return (donnees)
         
@@ -55,7 +55,7 @@ print(Sys.time() - start_time)
 
 N = 1000 # nombre de simulations
 start_time <- Sys.time()
-# pour des longueurs de 10, 20,50,80,100,200,100 on va déterminer le pourcentage de simulations pour lesquelles la chaîne 
+# pour des longueurs de 10, 20,50,80,100,200,100 on va dÃ©terminer le pourcentage de simulations pour lesquelles la chaine 
 # ne se coupe pas avant d'atteindre la longueur
 liste = c(1,10,20,50,80,100,200,400)
 #liste = seq(1,500)
@@ -71,23 +71,23 @@ for (k in seq(1,length(liste))){
 }
 
 print(Sys.time() - start_time)
-plot(liste, proportion, type='o', xlab =  "Longueurs de la chaîne", ylab = "proportion" )
+plot(liste, proportion, type='o', xlab =  "Longueurs de la chaine", ylab = "proportion" )
 
 start_time <- Sys.time()
 
 Importance_Sampling1 = function(T,N,l){
-    # T durée de la chaîne, N nombre de simulations, l seuil , l<=T
+    # T durÃ©e de la chaine, N nombre de simulations, l seuil , l<=T
      
  
-    liste_poids = matrix( nrow=0 , ncol = 1) # les poids de ces chaînes
-    indicatrice = matrix( nrow=0 , ncol = 1) # contiendra des 0 et 1: 1 si la chaîne est de longueur >= l, 0 sinon 
+    liste_poids = matrix( nrow=0 , ncol = 1) # les poids de ces chaines
+    indicatrice = matrix( nrow=0 , ncol = 1) # contiendra des 0 et 1: 1 si la chaine est de longueur >= l, 0 sinon 
     
     for (nbre_chaine in seq(1,N)){
         resultat = myope_algo_et_poids(T)
-        X = resultat[1:nrow(resultat),1:2] # chaîne simulée
+        X = resultat[1:nrow(resultat),1:2] # chaine simulÃ©e
         #print(nrow(X))
         #print(prod(resultat[,3]))
-        # On affecte à la chaîne simulée comme poids le produit de ces poids si la chaîne est de longueur T
+        # On affecte Ã  la chaine simulÃ©e comme poids le produit de ces poids si la chaine est de longueur T
         # Sinon on lui affecte un poids nul
         liste_poids <- rbind(liste_poids, (nrow(X)!= T+1) * prod(resultat[,3])) 
         indicatrice <- rbind(indicatrice, sum(nrow(X) >= l))
@@ -113,7 +113,7 @@ Importance_Sampling1 = function(T,N,l){
     
     tableau = cbind(N, valeur_estimee, ecart_type, borne_inf_intervalle_confiance, borne_sup_intervalle_confiance)
     tableau = data.frame(tableau)
-    colnames(tableau) = c('NbreSimulation', 'Proba estimée', 'Ecart_type', 'Borne Inf', "Borne Sup")
+    colnames(tableau) = c('NbreSimulation', 'Proba estimÃ©e', 'Ecart_type', 'Borne Inf', "Borne Sup")
     return (tableau)
 }
 
@@ -126,20 +126,20 @@ print(Sys.time() - start_time)
 start_time <- Sys.time()
 
 Importance_Sampling2 = function(T, N, l, Nbre_iter_max){
-    # T durée de la chaîne, N nombre de simulations, l seuil , l<=T, Nbre_iter_max nombre maximal d'itérations
-    # On impose  ici la condition d'avoir N chaînes de longueur T
+    # T durÃ©e de la chaine, N nombre de simulations, l seuil , l<=T, Nbre_iter_max nombre maximal d'itÃ©rations
+    # On impose  ici la condition d'avoir N chaines de longueur T
     n = 0
-    liste_poids = matrix( nrow=0 , ncol = 1) # les poids de ces chaînes
-    indicatrice = matrix( nrow=0 , ncol = 1) # contiendra des 0 et 1: 1 si la chaîne est de longueur >= l, 0 sinon 
+    liste_poids = matrix( nrow=0 , ncol = 1) # les poids de ces chaines
+    indicatrice = matrix( nrow=0 , ncol = 1) # contiendra des 0 et 1: 1 si la chaine est de longueur >= l, 0 sinon 
     
     while (n < N){
         resultat = myope_algo_et_poids(T)
-        X = resultat[1:nrow(resultat),1:2] # chaîne simulée
+        X = resultat[1:nrow(resultat),1:2] # chaine simulÃ©e
         #print(nrow(X))
         #print(prod(resultat[,3]))
         n_iter = 1
         while (nrow(X)!= T+1 & n_iter < Nbre_iter_max){ 
-        # tant qu'on n'a pas une chaîne de longueur désirée ( T ici ) et qu'on n'a pas atteint 
+        # tant qu'on n'a pas une chaine de longueur dÃ©sirÃ©e ( T ici ) et qu'on n'a pas atteint 
         # le nombre max de simulations
         resultat = myope_algo_et_poids(T)
         X = resultat[1:nrow(resultat),1:2]
@@ -147,7 +147,7 @@ Importance_Sampling2 = function(T, N, l, Nbre_iter_max){
         } 
         
         if (nrow(X)!= T+1){
-        # On affecte à la chaîne simulée comme poids le produit de ces poids
+        # On affecte Ã  la chaine simulÃ©e comme poids le produit de ces poids
         liste_poids <- rbind(liste_poids, prod(resultat[,3])) 
         indicatrice <- rbind(indicatrice, sum(nrow(X) >= l))
         n = n + 1
@@ -168,7 +168,7 @@ Importance_Sampling2 = function(T, N, l, Nbre_iter_max){
     
     tableau = cbind(N, valeur_estimee, ecart_type, borne_inf_intervalle_confiance, borne_sup_intervalle_confiance)
     tableau = data.frame(tableau)
-    colnames(tableau) = c('NbreSimulation', 'Proba estimée', 'Ecart_type', 'Borne Inf', "Borne Sup")
+    colnames(tableau) = c('NbreSimulation', 'Proba estimÃ©e', 'Ecart_type', 'Borne Inf', "Borne Sup")
     return (tableau)
 }
 
